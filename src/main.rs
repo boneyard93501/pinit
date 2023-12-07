@@ -4,11 +4,11 @@ use num_cpus;
 
 fn main() {
 
-    println!("available      : {}", num_cpus::get());
-    println!("physical       : {}", num_cpus::get_physical());
+    println!("available cpus : {}", num_cpus::get());
+    println!("physical  cpus : {}", num_cpus::get_physical());
 
     let core_ids = core_affinity::get_core_ids().unwrap();
-    println!("pinnable count : {}\npinnable ids   : {:?}\n\n", core_ids.len(), core_ids);
+    println!("pinnable count : {}\npinnable ids   : {:?}\n\n", core_ids.len(), core_ids.iter().map(|id| id.id).collect::<Vec<_>>());
 
 
     let handles = core_ids.into_iter().map(|id| {
