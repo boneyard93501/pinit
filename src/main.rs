@@ -4,19 +4,18 @@ use num_cpus;
 
 fn main() {
 
-    println!("available:      {}", num_cpus::get());
-    println!("physical:       {}", num_cpus::get_physical());
+    println!("available      : {}", num_cpus::get());
+    println!("physical       : {}", num_cpus::get_physical());
 
     let core_ids = core_affinity::get_core_ids().unwrap();
-    println!("pinnable count: {}\nids: {:?}", core_ids.len(), core_ids);
+    println!("pinnable count : {}\npinnable ids   : {:?}\n\n", core_ids.len(), core_ids);
 
 
     let handles = core_ids.into_iter().map(|id| {
         thread::spawn(move || {
-            println!("id: {:?}", id);
             // Pin this thread to a single CPU core.
             let res = core_affinity::set_for_current(id);
-            println!("res: {}", res);
+            println!("core id: {}, pinned: {}", id.id, res);
             if res {
               // Do more work after this.
               println!("pinned: {}", res);
@@ -24,11 +23,12 @@ fn main() {
         })
     }).collect::<Vec<_>>();
 
-    println!("handles: {:?}", handles);
-    /*
+    // println!("handles: {:?}", handles);
+    thread::sleep(std::time::Duration::from_secs(2)); 
+
     for handle in handles.into_iter() {
         handle.join().unwrap();
     }
-     */
+    println!("\n\njoined");
 }
 
